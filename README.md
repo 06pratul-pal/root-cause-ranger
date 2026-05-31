@@ -1,53 +1,66 @@
 # 🏴‍☠️ Root Cause Ranger
 
 AI Agent that automatically investigates production incidents using Coral SQL.
-
-Built for Pirates of the Coral-bean Hackathon — Track 1 Enterprise.
+Built for Pirates of the Coral-bean Hackathon — Track 1 (Enterprise)
 
 ## The Problem
-
-When production crashes, engineers manually check 4 tools:
-- GitHub — what code changed? (10 min)
-- Sentry — what error came? (10 min)  
-- Slack — what did team say? (10 min)
-- Datadog — which metric failed? (10 min)
-
-Total = 40 minutes of manual work every incident.
+When production crashes, engineers manually check 4 different tools — GitHub, Sentry, Slack, Datadog. This takes 40 minutes. Every minute = money lost.
 
 ## The Solution
+Root Cause Ranger automatically:
+1. Detects the crash
+2. Creates GitHub issue automatically
+3. Reads actual source code files
+4. Finds exact bug — file name + line number
+5. Tells which PR introduced it
+6. All in 30 seconds!
 
-One command. 30 seconds. Root cause found.
+## Demo Output
+BUG LOCATION:
+File: config.py
+Line: 8
+Code: DB_POOL_SIZE = 5 (should be 20)
 
-Agent automatically:
-1. Queries GitHub via Coral SQL
-2. Reads actual source code files
-3. Finds exact bug — file + line number
-4. Finds which PR introduced the bug
-5. Writes full incident report
+INTRODUCED BY: PR #2
+Author: 06pratul-pal
+FIX: Change DB_POOL_SIZE = 5 to DB_POOL_SIZE = 20
 
-## Demo
+## How to Run
 
-Run the website, click Pay Now 3 times, watch agent auto-investigate!
+Step 1 - Install Coral
+irm https://withcoral.com/install.ps1 | iex
 
-## Coral SQL
+Step 2 - Connect GitHub
+coral source add --interactive github
 
-```sql
-SELECT number, title, body
-FROM github.issues
-WHERE owner = 'mycompany'
-AND repo = 'payment-service'
-ORDER BY created_at DESC LIMIT 10;
-```
+Step 3 - Setup
+pip install -r requirements.txt
+cp .env.example .env
 
-Zero ETL. Zero API code. Just SQL.
+Step 4 - Run Demo Website
+python app.py
+Open http://localhost:5000
+Click Pay Now 3 times to trigger bug!
 
-## Setup
-
-Install Coral, connect GitHub, add API keys, run agent.
+Step 5 - Run Agent
+python agent.py --repo owner/repo
 
 ## Tech Stack
-
-- Coral SQL — GitHub data queries
+- Coral SQL — queries GitHub data
 - OpenAI GPT-4o — AI reasoning
-- Flask — Demo website
-- GitHub — Real code analysis
+- Flask — demo website
+- GitHub API — source code analysis
+
+## How Coral SQL is Used
+SELECT number, title, body FROM github.issues
+WHERE owner = 'mycompany'
+AND repo = 'payment-service'
+LIMIT 10
+
+Zero ETL. Zero glue code. 100% local.
+
+## Project Structure
+agent.py — Main AI agent
+app.py — Demo payment website
+requirements.txt — Dependencies
+.env.example — API keys template
