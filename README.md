@@ -13,7 +13,7 @@ Root Cause Ranger automatically:
 3. Reads actual source code files
 4. Finds exact bug — file name + line number
 5. Tells which PR introduced it
-6. All in 30 seconds!
+6. All in 25 seconds!
 
 ## Demo Output
 BUG LOCATION:
